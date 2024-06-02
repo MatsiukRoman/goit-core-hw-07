@@ -97,13 +97,16 @@ class AddressBook(UserDict):
         upcoming_birthdays = []
         today = datetime.today()
         for name, record in self.data.items():
-           birthday_this_year = record.birthday.value.replace(year=today.year)
-           if birthday_this_year < today:
-               birthday_this_year = record.birthday.value.replace(year=today.year+1)
-               
-           if 0 <= (birthday_this_year - today).days <= days:
-                birthday_this_year = self.adjust_for_weekend(birthday_this_year)
-                upcoming_birthdays.append({"Contact": name, "upcoming birthday":birthday_this_year.strftime("%d.%m.%Y")})
+           if record.birthday is None:
+            pass
+           else:
+                birthday_this_year = record.birthday.value.replace(year=today.year)
+                if birthday_this_year < today:
+                    birthday_this_year = record.birthday.value.replace(year=today.year+1)
+                    
+                if 0 <= (birthday_this_year - today).days <= days:
+                    birthday_this_year = self.adjust_for_weekend(birthday_this_year)
+                    upcoming_birthdays.append({"Contact": name, "upcoming birthday":birthday_this_year.strftime("%d.%m.%Y")})
         return upcoming_birthdays
   
 def input_error(func):
@@ -111,7 +114,7 @@ def input_error(func):
         try:
             return func(*args, **kwargs)
         except ValueError:
-            return "Give me name and phone please."
+            return "Incorrect value."
         except KeyError:
             return "Enter the argument for the command"
         except IndexError:
@@ -178,7 +181,11 @@ def show_birthday(args, book: AddressBook):
     if record is None:
         return f"Contact not found!"
     else:
-        return f"{record.birthday.value.strftime("%d.%m.%Y")}"
+        if not record.birthday is None:
+            return f"{record.birthday.value.strftime("%d.%m.%Y")}"
+        else:
+            return None
+
 
 def birthdays(book: AddressBook):
     return book.get_upcoming_birthdays()
