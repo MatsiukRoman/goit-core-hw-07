@@ -82,7 +82,7 @@ class AddressBook(UserDict):
             if key == record:
                 del self[key]
 
-    def find_next_weekday(start_date, weekday):
+    def find_next_weekday(self, start_date, weekday):
         days_ahead = weekday - start_date.weekday()
         if days_ahead <= 0:
             days_ahead += 7
